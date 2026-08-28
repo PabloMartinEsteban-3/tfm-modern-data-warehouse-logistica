@@ -1,0 +1,20 @@
+{
+  "generado": "2026-08-20T16:09:17.752979+00:00",
+  "registros_entrada": 9384487,
+  "registros_aceptados": 9207263,
+  "registros_rechazados": 177224,
+  "tasa_rechazo_pct": 1.888,
+  "rechazos_por_regla": {
+    "R2_duracion": 85778,
+    "R3_distancia": 85057,
+    "R1_temporal_incoherente": 3839,
+    "R4_velocidad": 2550
+  },
+  "umbrales": {
+    "MAX_DURACION_MIN": 240.0,
+    "MIN_DURACION_MIN": 0.5,
+    "MAX_DISTANCIA_KM": 150.0,
+    "MAX_VELOCIDAD_KMH": 120.0
+  },
+  "segundos_pipeline": 341.8
+}

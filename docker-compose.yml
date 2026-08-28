@@ -1,0 +1,45 @@
+# MongoDB local para la capa Bronze. Coste: 0 €.
+#
+#   docker compose up -d
+#   docker compose down          (para; conserva los datos en el volumen)
+#   docker compose down -v       (borra tambien los datos)
+#
+# Cadena de conexion:  mongodb://tfm:tfm@localhost:27017/?authSource=admin
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: tfm_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tfm
+      MONGO_INITDB_ROOT_PASSWORD: tfm
+    volumes:
+      - mongo_datos:/data/db
+    command: ["--wiredTigerCacheSizeGB", "1"]
+
+  # Opcional: interfaz web para inspeccionar la coleccion y sacar
+  # capturas de pantalla para el Anexo A de la memoria.
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: tfm_mongo_ui
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://tfm:tfm@mongo:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_datos:
+
+# ------------------------------------------------------------------
+# Plan B para Spark en Windows: evita winutils por completo.
+#   docker compose run --rm spark /opt/spark/bin/spark-submit \
+#       --driver-memory 4g /proyecto/src/04_silver_pipeline.py
+# Requiere que en .env pongas  mongo  en lugar de  localhost
+# ------------------------------------------------------------------

@@ -1,0 +1,34 @@
+{
+  "inicio": "2026-08-20T15:55:28.703966+00:00",
+  "ficheros": [
+    {
+      "fichero": "yellow_tripdata_2023-01.parquet",
+      "registros_origen": 3066766,
+      "registros_insertados": 3066766,
+      "coincide": true,
+      "segundos": 90.9,
+      "registros_por_segundo": 33725.3
+    },
+    {
+      "fichero": "yellow_tripdata_2023-02.parquet",
+      "registros_origen": 2913955,
+      "registros_insertados": 2913955,
+      "coincide": true,
+      "segundos": 85.6,
+      "registros_por_segundo": 34038.9
+    },
+    {
+      "fichero": "yellow_tripdata_2023-03.parquet",
+      "registros_origen": 3403766,
+      "registros_insertados": 3403766,
+      "coincide": true,
+      "segundos": 102.1,
+      "registros_por_segundo": 33348.8
+    }
+  ],
+  "segundos_totales": 336.5,
+  "documentos_finales": 9384487,
+  "tamano_datos_mb": 6107.9,
+  "tamano_almacenado_mb": 1282.7,
+  "tamano_indices_mb": 739.8
+}

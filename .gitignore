@@ -1,0 +1,15 @@
+.env
+datos/
+*.parquet
+__pycache__/
+.venv/
+venv/
+*.log
+spark-warehouse/
+entorno/
+.venv/
+*.pbix
+datos/
+evidencias/*.parquet
+__pycache__/
+*.pyc

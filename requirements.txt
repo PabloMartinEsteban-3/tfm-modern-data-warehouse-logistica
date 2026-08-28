@@ -1,0 +1,18 @@
+# Núcleo del pipeline
+pyspark==3.5.1
+pymongo==4.8.0
+pandas==2.2.2
+pyarrow==16.1.0
+
+# Geo / enriquecimiento
+geopandas==1.0.1
+osmnx==1.9.3
+shapely==2.0.4
+
+# Utilidades
+python-dotenv==1.0.1
+tqdm==4.66.4
+requests==2.32.3
+
+# Solo para la línea base comparativa (OE5)
+psycopg2-binary==2.9.9

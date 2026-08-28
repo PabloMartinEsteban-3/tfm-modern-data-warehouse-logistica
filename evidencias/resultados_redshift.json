@@ -1,0 +1,62 @@
+{
+  "segundos_ddl": 2.0,
+  "segundos_copy": 23.2,
+  "segundos_control": 13.5,
+  "filas_fact_servicio": 9207263,
+  "filas_dim_zona": 265,
+  "filas_dim_tiempo": 100,
+  "latencia": [
+    {
+      "consulta": "Q1",
+      "mediana_optimizada_s": 0.156,
+      "min_optimizada_s": 0.156,
+      "max_optimizada_s": 0.158,
+      "mediana_control_s": 0.149,
+      "min_control_s": 0.148,
+      "max_control_s": 0.153,
+      "mejora_x": 0.96
+    },
+    {
+      "consulta": "Q2",
+      "mediana_optimizada_s": 0.251,
+      "min_optimizada_s": 0.245,
+      "max_optimizada_s": 0.253,
+      "mediana_control_s": 0.304,
+      "min_control_s": 0.287,
+      "max_control_s": 0.355,
+      "mejora_x": 1.21
+    },
+    {
+      "consulta": "Q3",
+      "mediana_optimizada_s": 0.201,
+      "min_optimizada_s": 0.199,
+      "max_optimizada_s": 0.202,
+      "mediana_control_s": 0.191,
+      "min_control_s": 0.189,
+      "max_control_s": 0.196,
+      "mejora_x": 0.95
+    },
+    {
+      "consulta": "Q4",
+      "mediana_optimizada_s": 0.177,
+      "min_optimizada_s": 0.175,
+      "max_optimizada_s": 0.177,
+      "mediana_control_s": 0.167,
+      "min_control_s": 0.166,
+      "max_control_s": 0.169,
+      "mejora_x": 0.94
+    },
+    {
+      "consulta": "Q5",
+      "mediana_optimizada_s": 0.117,
+      "min_optimizada_s": 0.117,
+      "max_optimizada_s": 0.119,
+      "mediana_control_s": 0.118,
+      "min_control_s": 0.116,
+      "max_control_s": 0.122,
+      "mejora_x": 1.01
+    }
+  ],
+  "cache_desactivada": true,
+  "repeticiones": 5
+}
