@@ -1,33 +1,87 @@
-# Código del TFM — Arquitectura de Modern Data Warehouse para logística urbana
+# Arquitectura de Modern Data Warehouse para la optimización de logística urbana
 
-Pablo Martín Esteban · Máster en Análisis de Datos Masivos · Universidad Europea de Madrid
+Trabajo Fin de Máster · Máster Universitario en Análisis de Datos Masivos
+Universidad Europea de Madrid · Pablo Martín Esteban
+
+Integración de telemetría masiva en MongoDB y análisis analítico en AWS Redshift mediante PySpark.
+
+---
+
+## Qué hace
+
+Construye una plataforma analítica completa sobre telemetría de flota, organizada según el
+patrón **Medallion** en tres capas de refinamiento progresivo:
+
+| Capa | Tecnología | Función |
+|---|---|---|
+| **Bronze** | MongoDB | Ingesta del registro crudo en formato documental, con metadatos de linaje |
+| **Silver** | PySpark | Validación, deduplicación, enriquecimiento geográfico y cálculo de indicadores |
+| **Gold** | AWS Redshift | Modelo dimensional en estrella optimizado para consulta analítica |
+| **Consumo** | Power BI | Cuadro de mando de ETA y eficiencia de rutas |
+
+La validación se realiza sobre **9.384.487 registros** del conjunto público de la
+[NYC Taxi & Limousine Commission](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page),
+correspondientes al primer trimestre de 2023.
+
+## Resultados
+
+- Ciclo completo en **851 segundos** sobre un portátil convencional
+- Tasa de rechazo por reglas de calidad del **1,89 %**, con desglose por regla
+- El diseño físico del almacén (`DISTKEY` y `SORTKEY`) **no mejora la latencia** a este volumen,
+  contrastado frente a un modelo de control
+- El cruce entre desviación sobre el ETA y factor de rodeo permite **distinguir la ineficiencia
+  por congestión de la derivada de restricciones de la red viaria**
+
+Las métricas completas están en [`evidencias/`](evidencias/), generadas por los propios scripts.
+
+## Estructura
+
+```
+src/
+  01_descarga_datos.py       Descarga NYC TLC y cartografía de zonas
+  02_ingesta_bronze.py       Carga en MongoDB con metadatos de linaje
+  03_dimension_zonas.py      Dimensión de zonas y centroides
+  04_silver_pipeline.py      Validación, KPI y escritura Parquet
+  04b_export_bronze.py       Exportación intermedia (alternativa al conector Spark)
+  05_preparar_gold.py        Claves subrogadas y conformación de tipos
+  07_redshift_todo.py        DDL, carga COPY y medición en una ejecución
+  09_medir_latencia_v2.py    Medición rigurosa optimizada vs. control
+  08_generar_tablas_latex.py Genera las tablas de resultados en LaTeX
+  sql/                       DDL del esquema en estrella y consultas de referencia
+evidencias/                  Informes de ejecución y capturas del cuadro de mando
+```
 
 ## Puesta en marcha
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python -m venv entorno
+source entorno/bin/activate      # Windows: .\entorno\Scripts\Activate.ps1
 pip install -r requirements.txt
-cp .env.example .env               # y rellena tus credenciales
-java -version                      # necesitas Java 11 o 17 para Spark
+cp .env.example .env             # rellenar credenciales
+docker compose up -d             # MongoDB local
 ```
 
-## Orden de ejecución
+Ejecución completa de las capas locales:
 
-| Paso | Comando | Salida | Objetivo |
-|---|---|---|---|
-| 1 | `python src/01_descarga_datos.py` | `datos/raw/*.parquet` | — |
-| 2 | `python src/02_ingesta_bronze.py` | Colección Mongo + `evidencias/informe_ingesta_bronze.json` | OE1 |
-| 3 | `python src/03_dimension_zonas.py` | `datos/silver/dim_zona.parquet` | OE2 |
-| 4 | `spark-submit --packages org.mongodb.spark:mongo-spark-connector_2.12:10.3.0 --driver-memory 4g src/04_silver_pipeline.py` | `datos/silver/fact_servicio/` + `evidencias/informe_calidad_silver.json` | OE2 |
-| 5 | `spark-submit --driver-memory 4g src/05_preparar_gold.py` | `datos/gold/` | OE3 |
-| 6 | `aws s3 sync datos/gold/ s3://TU_BUCKET/silver/` | S3 | OE3 |
-| 7 | Ejecutar `src/sql/01_ddl_gold.sql` y `02_carga_copy.sql` en Redshift | Tablas cargadas | OE3 |
-| 8 | `python src/06_medir_latencia.py` | `evidencias/latencia_consultas.json` | OE3 |
-| 9 | Power BI Desktop → conector Amazon Redshift | Cuadro de mando | OE4 |
+```bash
+bash run_local.sh                # Windows: .\run_local.ps1
+```
 
-## Reglas importantes
+Capa Gold sobre Redshift:
 
-- **Empieza con UN mes** en `config.MESES`. Cuando todo funcione, amplía.
-- **Nunca subas `.env` a Git.** Ya está en `.gitignore`.
-- Todo lo que se escribe en `evidencias/` es material para la memoria. No lo borres.
+```bash
+aws s3 sync datos/gold s3://TU_BUCKET/silver/
+python src/07_redshift_todo.py
+python src/09_medir_latencia_v2.py
+```
+
+Requiere Python 3.11, Java 17 y Docker.
+
+## Notas
+
+- El fichero `.pbix` del cuadro de mando no se incluye por tamaño; las capturas de las tres
+  vistas están en [`evidencias/`](evidencias/).
+- Los conjuntos de datos no se versionan. El script `01_descarga_datos.py` los obtiene del
+  origen público.
+- `config.py` centraliza los umbrales de las reglas de calidad, de modo que los criterios de
+  validación son revisables en un único punto.
